@@ -254,12 +254,14 @@ class ULLME(nn.Module):
                     outputs = self.model(
                         input_ids=input_ids,
                         attention_mask=attention_mask,
+                        is_causal=True,
                         labels = input_ids.clone().contiguous(),
                     )
             else:
                 outputs = self.model(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
+                    is_causal=True,
                     labels = input_ids.clone().contiguous(),
                 )
 
