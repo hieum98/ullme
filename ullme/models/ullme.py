@@ -311,9 +311,9 @@ class WrappedULLME(nn.Module):
     def __init__(
             self,
             model_name_or_path: str,
-            model_backbone_type: str,
+            model_backbone_type: str=None,
             pooling_method: str='mean',
-            lora_name: str = 'encoder_lora',
+            lora_name: str = None,
             loar_r: int = 16,
             lora_alpha: int = 32,
             dropout: float = 0.1,
@@ -348,7 +348,7 @@ class WrappedULLME(nn.Module):
             state_dict = torch.load(model_checkpoint, map_location='cpu')
             self.model.load_state_dict(state_dict['model'], strict=False)
 
-        self.special_tokens = SPECIAL_TOKENS[model_backbone_type]
+        self.special_tokens = SPECIAL_TOKENS.get(model_backbone_type, {})
         self.tokenizer = self.model.tokenizer
 
         self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")

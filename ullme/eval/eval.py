@@ -14,11 +14,11 @@ from ullme.eval.constants import MTEB_DS_TO_PROMPT, QUICK_EVAL, LANG_TO_CODES, M
 
 def eval_mteb_dataset(
         dataset_name: str,
-        instruction: str,
         langs: List[str],
         model: nn.Module,
+        instruction: str="",
         output_folder: str='results',
-        batch_size: int=32,
+        batch_size: int=128,
         max_length: int=512,
         aggregation=np.max,
 ):  
