@@ -1,3 +1,6 @@
 *__pycache__*
 results
 ullme.egg-info*
+wandb
+checkpoints
+output

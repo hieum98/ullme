@@ -284,14 +284,16 @@ class ULLME(nn.Module):
                 encoder_representation = self.model.model(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
+                    output_hidden_states=True,
                     return_dict=True
-                ).last_hidden_state # (batch_size, seq_len, hidden_size)
+                ).hidden_states[-1] # (batch_size, seq_len, hidden_size)
             else:
                 encoder_representation = self.model(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
+                    output_hidden_states=True,
                     return_dict=True
-                ).last_hidden_state
+                ).hidden_states[-1] # (batch_size, seq_len, hidden_size)
 
             sentence_representation = self.pooling(
                 hidden_state=encoder_representation,
