@@ -1,8 +1,7 @@
 brotli
 torch
 cffi
-faiss-cpu
-# flash-attn # Should be manually installed  
+faiss-cpu  
 gmpy2
 ipykernel
 lightning
@@ -17,6 +16,7 @@ pytorch-metric-learning
 ruamel.yaml
 text-dedup
 wandb
+# flash-attn # Should be manually installed
 # accelerate # Installed as dependency for peft
 # aiohttp # Installed as dependency for datasets
 # aiosignal # Installed as dependency for aiohttp
