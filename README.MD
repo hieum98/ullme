@@ -57,7 +57,7 @@ from ullme.trainer import GradCacheTrainer
 
 trainer = GradCacheTrainer(
     con_loss_type='NTXentLoss',
-    gen_loss_type='dpo', # 'sft'
+    gen_loss_type='sigmoid', # 'sft'
     use_kl_loss=True
 )
 trainer.fit_epoch(
