@@ -171,9 +171,15 @@ if __name__=='__main__':
     os.environ['HF_DATASETS_TRUST_REMOTE_CODE']='1'
     
     import argparse
+    from transformers import HfArgumentParser
+    from ullme.args import DataArguments, ModelArguments, TrainingArguments
     from ullme.models.ullme import WrappedULLME
 
+
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config_file", type=str, required=True, help="Path to the yaml config file",
+    )
     parser.add_argument(
         "--checkpoint_path", type=str, default=None, help="Path to the model checkpoint"
     )
@@ -192,10 +198,22 @@ if __name__=='__main__':
 
     args = parser.parse_args()
 
+    config_file = args.config_file
+
+    hf_parser = HfArgumentParser((DataArguments, ModelArguments, TrainingArguments))
+    print(f"Loading yaml config {config_file}")
+    data_args, model_args, training_args = hf_parser.parse_yaml_file(yaml_file=config_file)
+
     # Load the model
     model = WrappedULLME(
-        model_name_or_path='meta-llama/Meta-Llama-3-8B-Instruct',
-        model_backbone_type='llama',
+        model_name_or_path=model_args.model_name_or_path,
+        model_backbone_type=model_args.model_backbone_type,
+        pooling_method=model_args.pooling_method,
+        lora_name=model_args.lora_name,
+        loar_r=model_args.loar_r,
+        lora_alpha=model_args.lora_alpha,
+        dropout=model_args.dropout,
+        attn_implementation=model_args.attn_implementation,
         model_checkpoint=args.checkpoint_path,
     )
 
