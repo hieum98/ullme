@@ -12,10 +12,10 @@ from torch.utils.data import DataLoader
 from torch.utils.checkpoint import get_device_states, set_device_states
 import lightning as L
 
-from src.models.ullme import ULLME, WrappedULLME
-from src.trainer.loss import ContrastiveLoss, PreferenceLoss, KLLoss
-from src.trainer.utils import split_input, get_batch_logps
-from src.eval.eval import eval_multilingual, eval_mteb
+from ullme.models.ullme import ULLME, WrappedULLME
+from ullme.trainer.loss import ContrastiveLoss, PreferenceLoss, KLLoss
+from ullme.trainer.utils import split_input, get_batch_logps
+from ullme.eval.eval import eval_multilingual, eval_mteb
 
 
 class RandContext:

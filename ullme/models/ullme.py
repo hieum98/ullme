@@ -19,12 +19,13 @@ from transformers.models.t5.modeling_t5 import T5EncoderModel
 from peft import PeftModel, LoraConfig, TaskType, get_peft_model
 import mteb
 
-from src.models.modeling_bidirectional_mistral import BidirectionalMistralForCausalLM
-from src.models.modeling_bidirectional_llama import BidirectionalLlamaForCausalLM
-from src.models.modeling_bidirectional_phi3 import BidirectionalPhi3ForCausalLM
-from src.models.modeling_bidirectional_qwen2 import BidirectionalQwen2ForCausalLM
-from src.special_tokens import SPECIAL_TOKENS
-from src.models.utils import find_all_linear_names
+from ullme.models.modeling_bidirectional_mistral import BidirectionalMistralForCausalLM
+from ullme.models.modeling_bidirectional_llama import BidirectionalLlamaForCausalLM
+from ullme.models.modeling_bidirectional_phi3 import BidirectionalPhi3ForCausalLM
+from ullme.models.modeling_bidirectional_phi import BidirectionalPhiForCausalLM
+from ullme.models.modeling_bidirectional_qwen2 import BidirectionalQwen2ForCausalLM
+from ullme.special_tokens import SPECIAL_TOKENS
+from ullme.models.utils import find_all_linear_names
 
 
 class ULLME(nn.Module):
@@ -33,7 +34,7 @@ class ULLME(nn.Module):
             model_name_or_path: str,
             model_backbone_type: str,
             pooling_method: str='mean',
-            lora_name: str = 'encoder_lora',
+            lora_name: str = None,
             loar_r: int = 16,
             lora_alpha: int = 32,
             dropout: float = 0.1,
@@ -73,6 +74,11 @@ class ULLME(nn.Module):
             attn_implementation=attn_implementation,
             model_dtype=model_dtype,
         )
+        if model_backbone_type is None:
+            self.is_lm_with_head = False
+        else:
+            self.is_lm_with_head = True
+
         self.encoder_dim = self.model.config.hidden_size
 
         self.pooling_method = pooling_method
@@ -145,7 +151,7 @@ class ULLME(nn.Module):
             'torch_dtype': torch.bfloat16 if attn_implementation == "flash_attention_2" else model_dtype,
             'attn_implementation': attn_implementation,
         }
-        if not is_llm_bidirectional:
+        if not is_llm_bidirectional or backbone_type is None:
             if 't5' in model_name_or_path:
                 model_class = T5EncoderModel
                 kwargs = {
@@ -162,6 +168,8 @@ class ULLME(nn.Module):
                 model_class = BidirectionalLlamaForCausalLM
             elif backbone_type == "phi3":
                 model_class = BidirectionalPhi3ForCausalLM
+            elif backbone_type == "phi":
+                model_class = BidirectionalPhiForCausalLM
             elif backbone_type == "qwen2":
                 model_class = BidirectionalQwen2ForCausalLM
             else:
@@ -244,6 +252,8 @@ class ULLME(nn.Module):
             is_generate: bool = False,
             disable_lora: bool = False,
     ):  
+        if self.is_lm_with_head == False and is_generate:
+            raise ValueError("Model does not have a head for generation")
         
         if is_generate:
             labels = input_ids.clone().contiguous()
@@ -270,11 +280,18 @@ class ULLME(nn.Module):
                 'logits': outputs.logits,
             }
         else:
-            encoder_representation = self.model.model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                return_dict=True
-            ).last_hidden_state # (batch_size, seq_len, hidden_size)
+            if self.is_lm_with_head:
+                encoder_representation = self.model.model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    return_dict=True
+                ).last_hidden_state # (batch_size, seq_len, hidden_size)
+            else:
+                encoder_representation = self.model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    return_dict=True
+                ).last_hidden_state
 
             sentence_representation = self.pooling(
                 hidden_state=encoder_representation,

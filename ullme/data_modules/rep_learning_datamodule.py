@@ -7,8 +7,8 @@ from datasets import load_dataset
 from tqdm import tqdm
 from transformers import PreTrainedTokenizer
 
-from src.data_modules.rep_learning_dataset import RepLearningDataset, ConcatRepLearningDataset, RepLearningCollator
-from src.special_tokens import SPECIAL_TOKENS
+from ullme.data_modules.rep_learning_dataset import RepLearningDataset, ConcatRepLearningDataset, RepLearningCollator
+from ullme.special_tokens import SPECIAL_TOKENS
 
 
 class ConcatedDataSampler(Sampler):

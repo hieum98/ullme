@@ -15,20 +15,22 @@ from transformers import PreTrainedTokenizer, HfArgumentParser
 from transformers.models.mistral.modeling_mistral import MistralDecoderLayer
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 from transformers.models.phi3.modeling_phi3 import Phi3DecoderLayer
+from transformers.models.phi.modeling_phi import PhiDecoderLayer
 from transformers.models.qwen2.modeling_qwen2 import Qwen2DecoderLayer
 
-from src.data_modules.rep_learning_datamodule import RepLearningDataModule
-from src.models.ullme import ULLME
-from src.models.utils import get_wrapping_policy, get_activation_checkpointing_policy
-from src.trainer.gradcache_trainer import GradCacheTrainer
-from src.args import DataArguments, ModelArguments, TrainingArguments
-from src.trainer.utils import choose_logger, get_cosine_schedule_with_warmup, get_trainable_parameters, trainable_filter
+from ullme.data_modules.rep_learning_datamodule import RepLearningDataModule
+from ullme.models.ullme import ULLME
+from ullme.models.utils import get_wrapping_policy, get_activation_checkpointing_policy
+from ullme.trainer.gradcache_trainer import GradCacheTrainer
+from ullme.args import DataArguments, ModelArguments, TrainingArguments
+from ullme.trainer.utils import choose_logger, get_cosine_schedule_with_warmup, get_trainable_parameters, trainable_filter
 
 
 backbone_to_layer_type = {
     'mistral': MistralDecoderLayer,
     'llama': LlamaDecoderLayer,
     'phi3': Phi3DecoderLayer,
+    'phi': PhiDecoderLayer,
     'qwen2': Qwen2DecoderLayer,
 }
 

@@ -9,7 +9,7 @@ import torch.nn as nn
 import mteb
 from tqdm import tqdm
 
-from src.eval.constants import MTEB_DS_TO_PROMPT, QUICK_EVAL, LANG_TO_CODES, MULTILINGUAL_DS_TO_PROMPT
+from ullme.eval.constants import MTEB_DS_TO_PROMPT, QUICK_EVAL, LANG_TO_CODES, MULTILINGUAL_DS_TO_PROMPT
 
 
 def eval_mteb_dataset(
@@ -171,7 +171,7 @@ if __name__=='__main__':
     os.environ['HF_DATASETS_TRUST_REMOTE_CODE']='1'
     
     import argparse
-    from src.models.ullme import WrappedULLME
+    from ullme.models.ullme import WrappedULLME
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
